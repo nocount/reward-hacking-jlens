@@ -1,0 +1,16 @@
+{
+ "thinking": false,
+ "steps": 50,
+ "max_completion_length": 1024,
+ "num_generations": 8,
+ "prompts_per_step": 4,
+ "wall_s": 1193.4,
+ "s_per_step": 23.9,
+ "completion_tokens": 1067492,
+ "completion_tok_per_s_end_to_end": 895,
+ "gpu_used_peak_mib (incl. ~1GB desktop)": 14710,
+ "torch_max_allocated_GB": 16.59,
+ "reward_first10_steps": 0.4688,
+ "reward_last10_steps": 0.6438,
+ "frac_truncated": 0.3869
+}

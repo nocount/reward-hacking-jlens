@@ -89,12 +89,12 @@ The question in step 3, and the obfuscation question in step 4, are the novel pa
 ## 6. Phases and tasks
 
 ### Phase 0: Environment and de-risking (target: 1–2 days)
-- [ ] **0.1** Confirm the PyTorch / CUDA build supports Blackwell (sm_120). Check bitsandbytes, vLLM, TRL and flash-linear-attention versions.
-- [ ] **0.2** Load Qwen3.5-2B text-only in bf16; run a forward and backward pass through a full prompt. Confirm the DeltaNet layers produce gradients.
-- [ ] **0.3** Fit a J-lens with `jlens.fit` on ~100 pretraining-like prompts of 128 tokens. Time it.
-- [ ] **0.4** Sanity-check the lens on the repo prompt ("Fact: The currency used in the country shaped like a boot is"). Compare J-lens and logit lens readouts across layers. Mid-layer readouts should surface the intermediate concept.
-- [ ] **0.5** Baseline Countdown accuracy with thinking on, around 200 problems. RL needs a non-trivial success rate.
-- [ ] **0.6** Run a short LoRA GRPO job of ~50 steps; measure tokens/sec and peak VRAM.
+- [x] **0.1** Confirm the PyTorch / CUDA build supports Blackwell (sm_120). Check bitsandbytes, vLLM, TRL and flash-linear-attention versions.
+- [x] **0.2** Load Qwen3.5-2B text-only in bf16; run a forward and backward pass through a full prompt. Confirm the DeltaNet layers produce gradients.
+- [x] **0.3** Fit a J-lens with `jlens.fit` on ~100 pretraining-like prompts of 128 tokens. Time it.
+- [x] **0.4** Sanity-check the lens on the repo prompt ("Fact: The currency used in the country shaped like a boot is"). Compare J-lens and logit lens readouts across layers. Mid-layer readouts should surface the intermediate concept.
+- [x] **0.5** Baseline Countdown accuracy with thinking on, around 200 problems. RL needs a non-trivial success rate.
+- [x] **0.6** Run a short LoRA GRPO job of ~50 steps; measure tokens/sec and peak VRAM.
 
 **Decision gate:** If 0.2 or 0.3 fails, or 0.2–0.4 together take more than about two days, switch to Qwen3-1.7B and repeat 0.2–0.6.
 

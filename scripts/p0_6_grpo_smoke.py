@@ -13,7 +13,8 @@ from rhjl.countdown import DATASET, build_messages, score
 STEPS = int(os.environ.get("STEPS", 50)); MAX_COMP = int(os.environ.get("MAX_COMP", 1024))
 THINK = os.environ.get("THINK", "0") == "1"  # 0.5 showed thinking mode almost never finishes
 NUM_GEN = int(os.environ.get("NUM_GEN", 8)); PPS = int(os.environ.get("PROMPTS_PER_STEP", 4))
-OUT = os.environ.get("OUT", "runs/p0_6_grpo"); MODEL = "Qwen/Qwen3.5-2B"
+OUT = os.environ.get("OUT", "runs/p0_6_grpo")
+MODEL = os.environ.get("MODEL", "/home/wil/models/qwen3.5-2b-text")  # scripts/make_text_only_ckpt.py
 os.makedirs(OUT, exist_ok=True)
 
 ds = load_dataset(DATASET, split="train").shuffle(seed=42).select(range(32000, 32000 + STEPS * PPS * 2))  # GRAFT's RL chunk
