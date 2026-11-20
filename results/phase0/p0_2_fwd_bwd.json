@@ -1,0 +1,212 @@
+{
+ "class": "Qwen3_5ForCausalLM",
+ "n_params_B": 1.882,
+ "n_layers": 24,
+ "hidden": 2048,
+ "chunk_impl": "transformers.models.qwen3_5.modeling_qwen3_5",
+ "conv_impl": "transformers.models.qwen3_5.modeling_qwen3_5",
+ "weights_mem_GB": 3.76,
+ "gen_sample": "Paris\n",
+ "loss_fla": 1.2032,
+ "fwd_bwd_s_1024tok": 0.189,
+ "peak_mem_GB": 10.89,
+ "per_layer": [
+  {
+   "layer": 0,
+   "type": "linear_attention",
+   "param_grad_norm": 6.8818,
+   "params_without_grad": [],
+   "resid_grad_norm": 2.45688,
+   "finite": true
+  },
+  {
+   "layer": 1,
+   "type": "linear_attention",
+   "param_grad_norm": 2.6093,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.77058,
+   "finite": true
+  },
+  {
+   "layer": 2,
+   "type": "linear_attention",
+   "param_grad_norm": 2.7214,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.50695,
+   "finite": true
+  },
+  {
+   "layer": 3,
+   "type": "full_attention",
+   "param_grad_norm": 2.2002,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.40236,
+   "finite": true
+  },
+  {
+   "layer": 4,
+   "type": "linear_attention",
+   "param_grad_norm": 1.8384,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.33066,
+   "finite": true
+  },
+  {
+   "layer": 5,
+   "type": "linear_attention",
+   "param_grad_norm": 1.8154,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.29,
+   "finite": true
+  },
+  {
+   "layer": 6,
+   "type": "linear_attention",
+   "param_grad_norm": 2.1749,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.25489,
+   "finite": true
+  },
+  {
+   "layer": 7,
+   "type": "full_attention",
+   "param_grad_norm": 2.0647,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.22153,
+   "finite": true
+  },
+  {
+   "layer": 8,
+   "type": "linear_attention",
+   "param_grad_norm": 1.4364,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.1973,
+   "finite": true
+  },
+  {
+   "layer": 9,
+   "type": "linear_attention",
+   "param_grad_norm": 1.5916,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.18577,
+   "finite": true
+  },
+  {
+   "layer": 10,
+   "type": "linear_attention",
+   "param_grad_norm": 1.6485,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.17302,
+   "finite": true
+  },
+  {
+   "layer": 11,
+   "type": "full_attention",
+   "param_grad_norm": 1.5114,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.16978,
+   "finite": true
+  },
+  {
+   "layer": 12,
+   "type": "linear_attention",
+   "param_grad_norm": 1.2845,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.15651,
+   "finite": true
+  },
+  {
+   "layer": 13,
+   "type": "linear_attention",
+   "param_grad_norm": 1.4819,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.14771,
+   "finite": true
+  },
+  {
+   "layer": 14,
+   "type": "linear_attention",
+   "param_grad_norm": 1.7451,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.13554,
+   "finite": true
+  },
+  {
+   "layer": 15,
+   "type": "full_attention",
+   "param_grad_norm": 1.3759,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.11673,
+   "finite": true
+  },
+  {
+   "layer": 16,
+   "type": "linear_attention",
+   "param_grad_norm": 1.4342,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.09692,
+   "finite": true
+  },
+  {
+   "layer": 17,
+   "type": "linear_attention",
+   "param_grad_norm": 1.0653,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.08841,
+   "finite": true
+  },
+  {
+   "layer": 18,
+   "type": "linear_attention",
+   "param_grad_norm": 1.0361,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.08393,
+   "finite": true
+  },
+  {
+   "layer": 19,
+   "type": "full_attention",
+   "param_grad_norm": 1.0343,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.07808,
+   "finite": true
+  },
+  {
+   "layer": 20,
+   "type": "linear_attention",
+   "param_grad_norm": 1.1137,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.06938,
+   "finite": true
+  },
+  {
+   "layer": 21,
+   "type": "linear_attention",
+   "param_grad_norm": 0.9923,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.06091,
+   "finite": true
+  },
+  {
+   "layer": 22,
+   "type": "linear_attention",
+   "param_grad_norm": 1.1112,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.05227,
+   "finite": true
+  },
+  {
+   "layer": 23,
+   "type": "full_attention",
+   "param_grad_norm": 1.4496,
+   "params_without_grad": [],
+   "resid_grad_norm": 0.04609,
+   "finite": true
+  }
+ ],
+ "loss_torch": 1.2032,
+ "fwd_bwd_s_torch": 0.395,
+ "resid_grad_cos_fla_vs_torch_min": 0.99719,
+ "qkv_wgrad_cos_layer0": 0.99723,
+ "PASS": true
+}

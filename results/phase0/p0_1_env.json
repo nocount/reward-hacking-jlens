@@ -1,0 +1,33 @@
+{
+ "python": "3.12.13",
+ "torch": "2.14.0+cu130",
+ "cuda_build": "13.0",
+ "cudnn": 92400,
+ "device": "NVIDIA GeForce RTX 5070 Ti",
+ "capability": [
+  12,
+  0
+ ],
+ "arch_list": [
+  "sm_75",
+  "sm_80",
+  "sm_86",
+  "sm_90",
+  "sm_100",
+  "sm_120"
+ ],
+ "transformers": "5.20.2",
+ "trl": "1.18.2",
+ "peft": "0.22.0",
+ "accelerate": "1.16.0",
+ "vllm": "0.33.0",
+ "fla": "0.6.0",
+ "bitsandbytes": "0.50.2",
+ "triton": "3.8.0",
+ "datasets": "5.2.0",
+ "flashinfer": "0.7.2.post1",
+ "jlens": "ok",
+ "bf16_matmul_tflops": 25.3,
+ "fla_gated_delta_fwd_bwd": "ok, |dq|=30.7, finite=True",
+ "bnb_4bit": "ok (8, 256)"
+}
