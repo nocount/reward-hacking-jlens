@@ -2,7 +2,7 @@
 
 env: STEPS (50), MAX_COMP (2048), NUM_GEN (8), PROMPTS_PER_STEP (4), OUT (runs/p0_6_grpo)
 """
-import json, os, subprocess, threading, time
+import json, os, subprocess, sys, threading, time
 import torch
 from datasets import load_dataset
 from peft import LoraConfig
@@ -80,5 +80,7 @@ summary = {"steps": STEPS, "max_completion_length": MAX_COMP, "num_generations":
            "reward_last10_steps": round(sum(r["reward"] for r in rows if r["step"] >= STEPS - 10) / max(1, sum(1 for r in rows if r["step"] >= STEPS - 10)), 4),
            "frac_truncated": round(sum(r["n_tok"] >= MAX_COMP for r in rows) / len(rows), 4)}
 print(json.dumps(summary, indent=1))
-json.dump(summary, open(f"{OUT}/summary.json", "w"), indent=1)
-os._exit(0)
+with open(f"{OUT}/summary.json", "w") as f:
+    json.dump(summary, f, indent=1)
+roll_f.close()
+sys.stdout.flush()

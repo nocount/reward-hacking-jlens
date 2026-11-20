@@ -1,0 +1,8 @@
+{
+ "n_prompts": 100,
+ "dim_batch": 8,
+ "max_seq_len": 128,
+ "fit_seconds": 1498.2,
+ "s_per_prompt": 14.98,
+ "peak_GB": 6.72
+}
