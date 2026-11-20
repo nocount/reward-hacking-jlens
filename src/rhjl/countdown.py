@@ -92,3 +92,31 @@ def score(completion: str, nums: list[int], target: int, thinking: bool = False)
     hits = res is not None and res[0] == target
     return {"answer": ans, "formatted": ans is not None, "valid_expr": res is not None,
             "uses_nums": uses_nums, "hits_target": hits, "correct": bool(uses_nums and hits)}
+
+
+def solve(nums: list[int], target: int) -> str | None:
+    """One expression using every number exactly once that equals target (exact arithmetic), or None.
+
+    Exhaustive search over pairwise combinations, which covers every binary expression tree.
+    Fast for the 3-4 number problems in the dataset.
+    """
+    def rec(items: list[tuple[Fraction, str]]) -> str | None:
+        if len(items) == 1:
+            return items[0][1] if items[0][0] == target else None
+        for i in range(len(items)):
+            for j in range(len(items)):
+                if i == j:
+                    continue
+                (a, ea), (b, eb) = items[i], items[j]
+                rest = [items[k] for k in range(len(items)) if k not in (i, j)]
+                cands = [(a - b, f"{ea} - {eb}"), (a / b, f"{ea} / {eb}")] if b != 0 else [(a - b, f"{ea} - {eb}")]
+                if i < j:  # commutative ops once per pair
+                    cands += [(a + b, f"{ea} + {eb}"), (a * b, f"{ea} * {eb}")]
+                for v, e in cands:
+                    e = e if len(rest) == 0 else f"({e})"
+                    found = rec(rest + [(v, e)])
+                    if found:
+                        return found
+        return None
+
+    return rec([(Fraction(n), str(n)) for n in nums])

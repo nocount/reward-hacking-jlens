@@ -99,11 +99,11 @@ The question in step 3, and the obfuscation question in step 4, are the novel pa
 **Decision gate:** If 0.2 or 0.3 fails, or 0.2–0.4 together take more than about two days, switch to Qwen3-1.7B and repeat 0.2–0.6.
 
 ### Phase 1: Hackable environment (target: 2–3 days)
-- [ ] **1.1** Build Countdown: given numbers plus a target, produce an arithmetic expression that hits the target.
-- [ ] **1.2** Add the loophole. **Primary design:** a `read_file` tool in a short multi-turn loop, with an `answers.txt` the prompt explicitly forbids reading (mirrors Goodfire's setup). **Simpler fallback:** a lenient grader that only checks the final number, not that the expression uses the given numbers.
-- [ ] **1.3** **Programmatic ground-truth labels.** Each rollout is tagged `hack` (read the forbidden file, or exploited the grader) or `clean` (valid solution) by deterministic checks, not an LLM judge. This is what makes the probe study clean.
-- [ ] **1.4** Write unit tests for the reward function and labeler, including adversarial cases: partial reads, reading then solving honestly, malformed tool calls.
-- [ ] **1.5** Optional second loophole type (e.g. a test-overwriting or answer-format exploit) to serve as a held-out hack type for probe generalization.
+- [x] **1.1** Build Countdown: given numbers plus a target, produce an arithmetic expression that hits the target.
+- [x] **1.2** Add the loophole. **Primary design:** a `read_file` tool in a short multi-turn loop, with an `answers.txt` the prompt explicitly forbids reading (mirrors Goodfire's setup). **Simpler fallback:** a lenient grader that only checks the final number, not that the expression uses the given numbers.
+- [x] **1.3** **Programmatic ground-truth labels.** Each rollout is tagged `hack` (read the forbidden file, or exploited the grader) or `clean` (valid solution) by deterministic checks, not an LLM judge. This is what makes the probe study clean.
+- [x] **1.4** Write unit tests for the reward function and labeler, including adversarial cases: partial reads, reading then solving honestly, malformed tool calls.
+- [x] **1.5** Optional second loophole type (e.g. a test-overwriting or answer-format exploit) to serve as a held-out hack type for probe generalization.
 
 ### Phase 2: Induce reward hacking (target: ~1 week, mostly waiting on GPU time)
 - [ ] **2.1** GRPO + LoRA on Qwen3.5-2B in the hackable environment, with thinking on and capped completion length.
