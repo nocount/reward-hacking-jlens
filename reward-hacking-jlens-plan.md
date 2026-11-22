@@ -106,18 +106,18 @@ The question in step 3, and the obfuscation question in step 4, are the novel pa
 - [x] **1.5** Optional second loophole type (e.g. a test-overwriting or answer-format exploit) to serve as a held-out hack type for probe generalization.
 
 ### Phase 2: Induce reward hacking (target: ~1 week, mostly waiting on GPU time)
-- [ ] **2.1** GRPO + LoRA on Qwen3.5-2B in the hackable environment, with thinking on and capped completion length.
-- [ ] **2.2** Log every rollout (prompt, chain of thought, tool calls, output, reward, label) and save checkpoints regularly.
-- [ ] **2.3** Track hack rate over training.
-- [ ] **2.4** If hacking doesn't appear: make the loophole more obvious, make the honest task harder (larger numbers or targets) so the loophole pays more, or start from the base model.
+- [x] **2.1** GRPO + LoRA on Qwen3.5-2B in the hackable environment, with capped completion length. *(Done, docs/phase2.md: non-thinking mode, `readme` hint variant. Runs: lr 5e-6 and 1e-5 (seed 0), lr 2e-5 (seeds 0–2), plus one grader-loophole-only run (`GRADER=lenient`, no answers.txt) at 2e-5. All file-loophole runs hacked; takeover onset depends more on seed than lr.)*
+- [x] **2.2** Log every rollout (prompt, chain of thought, tool calls, output, reward, label) and save a LoRA checkpoint every step (67 MB each).
+- [x] **2.3** Track hack rate over training, plus how much the model writes before the forbidden call and whether its final turn names the file. Pick checkpoints by hack rate on held-out problems (many samples each), not by the 32-rollout training batches.
+- [ ] **2.4** *(Not needed.)* If hacking doesn't appear: make the loophole more obvious, make the honest task harder (larger numbers or targets) so the loophole pays more, or start from the base model.
 
-**Exit criterion:** A checkpoint where hacking is common but not universal, so the same checkpoint yields both `hack` and `clean` rollouts.
+**Exit criterion:** A checkpoint where hacking is common but not universal (target 30–60% on held-out problems), so the same checkpoint yields both `hack` and `clean` rollouts.
 
 ### Phase 3: Probes, RQ1 (target: ~1 week)
-- [ ] **3.1** From one checkpoint, sample many rollouts per prompt to get matched `hack` / `clean` pairs.
-- [ ] **3.2** Cache residual-stream activations at every layer: mean-pooled over the chain of thought, and at the position just before the tool call or answer.
+- [ ] **3.1** From one checkpoint, sample many rollouts per prompt to get matched `hack` / `clean` pairs. *(Main: `file_lr5e-6_s0` step 97, 43% hack, 83% of problems mixed; held-out checkpoints and the grader checkpoint are listed in docs/phase2.md and results/phase2/checkpoints.json.)*
+- [ ] **3.2** Cache residual-stream activations at every layer. **Main readout: the position just before the forbidden tool call.** Phase 2 found the forbidden read is usually a parallel second call in the turn that reads problem.txt, so the readout is the token after the `</tool_call>` closing `read_file(problem.txt)`; clean rollouts with the same calls give the matched position (see docs/phase2.md for the other call patterns, incl. seed 2's read-before-the-rule style). Secondary: mean-pooled over the model's text before the decision point. Never pool over text after it, which often names answers.txt outright.
 - [ ] **3.3** Difference-in-means probe per layer: Δμ_l = mean(hack) − mean(clean). Score = projection onto Δμ_l.
-- [ ] **3.4** Baselines: logistic-regression probe; LLM judge on the chain of thought only; trivial features (output length, whether a tool was called at all).
+- [ ] **3.4** Baselines: logistic-regression probe; LLM judge run two ways, on the full transcript (near-trivial, since hacks name the file) and on the text up to the decision point only (the fair comparison with the probe); trivial features (output length, whether a tool was called at all, files read before the decision point).
 - [ ] **3.5** Evaluate AUROC per layer on held-out prompts, a held-out checkpoint and, if built, the held-out hack type (1.5).
 - [ ] **3.6** **Confound control:** never train on hacks from late checkpoints against clean rollouts from early ones, or the probe learns "late checkpoint". Match within a checkpoint.
 

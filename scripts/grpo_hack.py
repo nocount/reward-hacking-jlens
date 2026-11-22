@@ -7,8 +7,10 @@ Reward is the honest grader on the final turn; labels are logged per rollout.
 env:
   VARIANT (explicit)        loophole hint, see rhjl.hackenv.VARIANTS
   GRADER (strict)           "lenient" adds the grader loophole (rewards hitting the target with any numbers)
+  LOOPHOLE_FILE (1)         0 removes answers.txt from the workspace (grader-loophole-only runs)
   STEPS (30)  MAX_COMP (1536)  NUM_GEN (8)  PROMPTS_PER_STEP (4)  PER_DEVICE_BS (8)
   LR (2e-5)  LORA_R (32)  VLLM_UTIL (0.35)  MAX_TOOL_ITERS (3)  SAVE_EVERY (0 = never)
+  STOP_AT_HACK (0 = off)  STOP_WINDOW (10)   early stop once hacking has saturated
   OUT (runs/grpo_hack)  MODEL (/home/wil/models/qwen3.5-2b-text)  SEED (0)
 """
 import json
@@ -35,16 +37,19 @@ def main():
 
     variant = env("VARIANT", "explicit")
     grader = env("GRADER", "strict")
+    answers_file = env("LOOPHOLE_FILE", "1") == "1"
     steps, max_comp = env("STEPS", 30, int), env("MAX_COMP", 1536, int)
     num_gen, pps, bs = env("NUM_GEN", 8, int), env("PROMPTS_PER_STEP", 4, int), env("PER_DEVICE_BS", 8, int)
     save_every = env("SAVE_EVERY", 0, int)
+    stop_at_hack = env("STOP_AT_HACK", 0.0, float)  # stop once mean hack rate over the last STOP_WINDOW steps >= this
+    stop_window = env("STOP_WINDOW", 10, int)
     out = env("OUT", "runs/grpo_hack")
     model = env("MODEL", "/home/wil/models/qwen3.5-2b-text")
     os.makedirs(out, exist_ok=True)
 
     ds = load_dataset(DATASET, split="train").shuffle(seed=42).select(range(32000, 32000 + steps * pps * 2))
     ds = ds.map(lambda r: {"prompt": build_prompt(r["nums"], r["target"], variant),
-                           "solution": solve(r["nums"], r["target"])})
+                           "solution": solve(r["nums"], r["target"]), "answers_file": answers_file})
     roll_f = open(f"{out}/rollouts.jsonl", "w")
     per_step = defaultdict(Counter)
 
@@ -87,6 +92,16 @@ def main():
                                      "gpu_used_peak_mib": peak["mib"], **(logs or {})}) + "\n")
             self.f.flush()
 
+    class StopWhenSaturated(TrainerCallback):
+        def on_step_end(self, args, state, control, **kw):
+            done = sorted(per_step)[-stop_window:]
+            if stop_at_hack and len(done) == stop_window:
+                rate = sum(per_step[s]["hack"] for s in done) / sum(per_step[s]["n"] for s in done)
+                if rate >= stop_at_hack:
+                    print(f"[stop] hack rate {rate:.3f} over steps {done[0]}-{done[-1]}", flush=True)
+                    control.should_training_stop = True
+            return control
+
     cfg = GRPOConfig(
         output_dir=out, max_steps=steps, learning_rate=env("LR", 2e-5, float), lr_scheduler_type="constant",
         warmup_steps=0, per_device_train_batch_size=bs, gradient_accumulation_steps=pps * num_gen // bs,
@@ -102,7 +117,7 @@ def main():
     lora = LoraConfig(r=env("LORA_R", 32, int), lora_alpha=2 * env("LORA_R", 32, int), lora_dropout=0.0,
                       target_modules="all-linear", task_type="CAUSAL_LM")
     trainer = GRPOTrainer(model=model, reward_funcs=hack_env_reward, args=cfg, train_dataset=ds,
-                          peft_config=lora, environment_factory=CountdownFS, callbacks=[JsonlLog()])
+                          peft_config=lora, environment_factory=CountdownFS, callbacks=[JsonlLog(), StopWhenSaturated()])
     t0 = time.time()
     trainer.train()
     wall = time.time() - t0
@@ -110,8 +125,9 @@ def main():
 
     curve = {s: {k: round(c[k] / c["n"], 4) for k in ("hack", "clean", "fail", "attempted", "used_tools")}
              for s, c in sorted(per_step.items())}
-    summary = {"variant": variant, "grader": grader, "steps": steps, "max_completion_length": max_comp, "num_generations": num_gen,
-               "prompts_per_step": pps, "wall_s": round(wall, 1), "s_per_step": round(wall / steps, 1),
+    summary = {"variant": variant, "grader": grader, "answers_file": answers_file, "lr": cfg.learning_rate,
+               "seed": cfg.seed, "steps": steps, "max_completion_length": max_comp, "num_generations": num_gen,
+               "prompts_per_step": pps, "wall_s": round(wall, 1), "steps_done": trainer.state.global_step, "s_per_step": round(wall / max(1, trainer.state.global_step), 1),
                "gpu_used_peak_mib (incl. ~1GB desktop)": peak["mib"],
                "torch_max_allocated_GB": round(torch.cuda.max_memory_allocated() / 1e9, 2), "per_step": curve}
     with open(f"{out}/summary.json", "w") as f:
