@@ -9,9 +9,10 @@ usage: python scripts/p2_eval_ckpts.py RUN_DIR [STEP ...]
   With no steps, evaluates step 0 (base) and every EVERY-th checkpoint whose training-batch hack
   rate (smoothed over 5 steps) lies in [LO, HI], plus the first and last checkpoint.
 
-env: N_PROB (64)  K (8)  MAX_COMP (1536)  EVERY (2)  LO (0.05)  HI (0.95)
+env: N_PROB (64)  OFFSET (16000: first problem index in the shuffled dataset; RL used 32000+)
+     K (8)  MAX_COMP (1536)  EVERY (2)  LO (0.05)  HI (0.95)  SUBDIR (eval: output dir under RUN_DIR)
      GRADER / LOOPHOLE_FILE / VARIANT: read from RUN_DIR/summary.json unless set
-Writes RUN_DIR/eval/step_{N}.jsonl and RUN_DIR/eval/summary.json (merged with earlier results).
+Writes RUN_DIR/SUBDIR/step_{N}.jsonl and RUN_DIR/SUBDIR/summary.json (merged with earlier results).
 """
 import json
 import os
@@ -58,16 +59,17 @@ def main():
     answers_file = os.environ.get("LOOPHOLE_FILE", "1" if meta.get("answers_file", True) else "0") == "1"
     variant = os.environ.get("VARIANT", meta.get("variant", "readme"))
     n_prob, k = int(os.environ.get("N_PROB", "64")), int(os.environ.get("K", "8"))
+    offset = int(os.environ.get("OFFSET", "16000"))
     max_comp = int(os.environ.get("MAX_COMP", "1536"))
     steps = [int(s) for s in sys.argv[2:]] or pick_steps(run, int(os.environ.get("EVERY", "2")),
                                                           float(os.environ.get("LO", "0.05")),
                                                           float(os.environ.get("HI", "0.95")))
     base = "/home/wil/models/qwen3.5-2b-text"
-    out = run / "eval"
+    out = run / os.environ.get("SUBDIR", "eval")
     out.mkdir(exist_ok=True)
     print("evaluating steps", steps, "grader", grader, "answers_file", answers_file, flush=True)
 
-    ds = load_dataset(DATASET, split="train").shuffle(seed=42).select(range(16000, 16000 + n_prob))
+    ds = load_dataset(DATASET, split="train").shuffle(seed=42).select(range(offset, offset + n_prob))
     rows = [{"nums": r["nums"], "target": r["target"], "answers_file": answers_file} for r in ds]
     tok = AutoTokenizer.from_pretrained(base)
     llm = LLM(base, gpu_memory_utilization=0.55, max_model_len=max_comp + 1024, enable_prefix_caching=True,

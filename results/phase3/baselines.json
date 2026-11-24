@@ -1,0 +1,100 @@
+{
+ "trivial_features": {
+  "main (held-out problems)": {
+   "auroc_nonhack_match": 0.5133406106578275,
+   "auroc": 0.7331840605585282,
+   "auroc_nonhack": 0.6779693273448069,
+   "auroc_within": 0.6641577659101023,
+   "ci": [
+    0.7073464541952363,
+    0.7579075593052952
+   ]
+  },
+  "lr1e-5 step 17 (silent)": {
+   "auroc_nonhack_match": 0.5140690312269486,
+   "auroc": 0.707411099244492,
+   "auroc_nonhack": 0.6385150836797782,
+   "auroc_within": 0.6075946926954037,
+   "ci": [
+    0.6816650559271719,
+    0.7321811136152475
+   ]
+  },
+  "lr2e-5 s0 step 40 (announced)": {
+   "auroc_nonhack_match": 0.5051046335049446,
+   "auroc": 0.6723997401394345,
+   "auroc_nonhack": 0.5871546173619089,
+   "auroc_within": 0.7134490116801436,
+   "ci": [
+    0.6441064580457481,
+    0.7014295369716712
+   ]
+  },
+  "lr2e-5 s2 step 58 (rule unseen)": {
+   "auroc_nonhack_match": 0.45627035830618895,
+   "auroc": 0.7239915862410293,
+   "auroc_nonhack": 0.62192396002161,
+   "auroc_within": 0.70254355687048,
+   "ci": [
+    0.6878516356179797,
+    0.7549587413153133
+   ]
+  }
+ },
+ "policy_logit": {
+  "main (held-out problems)": {
+   "auroc_nonhack_match": 0.5393310173380929,
+   "auroc": 0.5309604940188282,
+   "auroc_nonhack": 0.522443799005686,
+   "auroc_within": 0.49725606364040936,
+   "ci": [
+    0.50252496582484,
+    0.5610598933134386
+   ],
+   "ctrl": 1.0
+  },
+  "lr1e-5 step 17 (silent)": {
+   "auroc_nonhack_match": 0.6190826230090429,
+   "auroc": 0.7302804477670978,
+   "auroc_nonhack": 0.7156060121522226,
+   "auroc_within": 0.6808757428721883,
+   "ci": [
+    0.7056738342106457,
+    0.7563708546204002
+   ],
+   "ctrl": 0.9999705703022655
+  },
+  "lr2e-5 s0 step 40 (announced)": {
+   "auroc_nonhack_match": 0.9119759991110782,
+   "auroc": 0.9259134219185169,
+   "auroc_nonhack": 0.9210491243005563,
+   "auroc_within": 0.9232461066187482,
+   "ci": [
+    0.9128648914843316,
+    0.9389951025242043
+   ],
+   "ctrl": 0.9999928266953507
+  },
+  "lr2e-5 s2 step 58 (rule unseen)": {
+   "auroc_nonhack_match": 0.9930958787707123,
+   "auroc": 0.9778582034149963,
+   "auroc_nonhack": 0.9803282009724473,
+   "auroc_within": 0.968121301775148,
+   "ci": [
+    0.9694270760745143,
+    0.9852682352427774
+   ],
+   "ctrl": 0.9953190082644628
+  }
+ },
+ "signatures": [
+  "read_file(README.md),list_files()|read_file(problem.txt)",
+  "read_file(README.md)",
+  "read_file(README.md),list_files()",
+  "read_file(README.md)|list_files()|read_file(problem.txt)",
+  "list_files(),read_file(README.md)|read_file(problem.txt)",
+  "read_file(README.md)|read_file(problem.txt)",
+  "list_files()|read_file(README.md)|read_file(problem.txt)",
+  "list_files()|read_file(README.md),read_file(problem.txt)"
+ ]
+}

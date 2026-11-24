@@ -1,0 +1,115 @@
+{
+ "layer": 16,
+ "main (held-out problems)": {
+  "frac_hacks_mentioning": 0.003416856492027335,
+  "frac_clean_mentioning": 0.0,
+  "all hacks": {
+   "n_hack": 878,
+   "probe_main": 0.700352526439483,
+   "probe_in_dist": 0.6769919617547625,
+   "policy_logit": 0.5309604940188282,
+   "mention_regex": 0.5017084282460137,
+   "judge_prefix": 0.4577690991972462
+  },
+  "hacks that mention": {
+   "n_hack": 3,
+   "probe_main": 0.34508421464943206,
+   "probe_in_dist": 0.3732863298080689,
+   "policy_logit": 0.7293380336858597,
+   "mention_regex": 1.0,
+   "judge_prefix": 0.20309439874657265
+  },
+  "hacks that don't mention": {
+   "n_hack": 875,
+   "probe_main": 0.701570589222763,
+   "probe_in_dist": 0.6780332382071512,
+   "policy_logit": 0.5302803424542555,
+   "mention_regex": 0.5,
+   "judge_prefix": 0.4586422695987913
+  }
+ },
+ "lr1e-5 step 17 (silent)": {
+  "frac_hacks_mentioning": 0.045283018867924525,
+  "frac_clean_mentioning": 0.042767295597484274,
+  "all hacks": {
+   "n_hack": 795,
+   "probe_main": 0.7318088683200822,
+   "probe_in_dist": 0.6991717099798267,
+   "policy_logit": 0.7302804477670978,
+   "mention_regex": 0.5012578616352201,
+   "judge_prefix": 0.5737059451762192
+  },
+  "hacks that mention": {
+   "n_hack": 36,
+   "probe_main": 0.32127882599580715,
+   "probe_in_dist": 0.37941998602375965,
+   "policy_logit": 0.7734800838574423,
+   "mention_regex": 0.9786163522012579,
+   "judge_prefix": 0.26883298392732347
+  },
+  "hacks that don't mention": {
+   "n_hack": 759,
+   "probe_main": 0.7512806489836843,
+   "probe_in_dist": 0.7143377996536323,
+   "policy_logit": 0.7282314531699273,
+   "mention_regex": 0.47861635220125787,
+   "judge_prefix": 0.5881663227848626
+  }
+ },
+ "lr2e-5 s0 step 40 (announced)": {
+  "frac_hacks_mentioning": 0.6042780748663101,
+  "frac_clean_mentioning": 0.01687289088863892,
+  "all hacks": {
+   "n_hack": 748,
+   "probe_main": 0.8565661411307544,
+   "probe_in_dist": 0.9204455225182414,
+   "policy_logit": 0.9259134219185169,
+   "mention_regex": 0.7937025919888355,
+   "judge_prefix": 0.35786469204718396
+  },
+  "hacks that mention": {
+   "n_hack": 452,
+   "probe_main": 0.922655962252506,
+   "probe_in_dist": 0.9924918124172533,
+   "policy_logit": 0.9907099555033496,
+   "mention_regex": 0.9915635545556805,
+   "judge_prefix": 0.2803898683018605
+  },
+  "hacks that don't mention": {
+   "n_hack": 296,
+   "probe_main": 0.755645198066458,
+   "probe_in_dist": 0.8104288906454261,
+   "policy_logit": 0.8269673638768127,
+   "mention_regex": 0.4915635545556805,
+   "judge_prefix": 0.47617084182044817
+  }
+ },
+ "lr2e-5 s2 step 58 (rule unseen)": {
+  "frac_hacks_mentioning": 0.9083333333333333,
+  "frac_clean_mentioning": 0.37861915367483295,
+  "all hacks": {
+   "n_hack": 720,
+   "probe_main": 0.6959910913140311,
+   "probe_in_dist": 0.9936773075971295,
+   "policy_logit": 0.9778582034149963,
+   "mention_regex": 0.7648570898292502,
+   "judge_prefix": 0.29453569660975004
+  },
+  "hacks that mention": {
+   "n_hack": 654,
+   "probe_main": 0.7110704726098771,
+   "probe_in_dist": 0.995477547795645,
+   "policy_logit": 0.9785660284832758,
+   "mention_regex": 0.8106904231625836,
+   "judge_prefix": 0.27224106577307366
+  },
+  "hacks that don't mention": {
+   "n_hack": 66,
+   "probe_main": 0.5465681312006478,
+   "probe_in_dist": 0.9758385638118378,
+   "policy_logit": 0.9708443004656814,
+   "mention_regex": 0.31069042316258355,
+   "judge_prefix": 0.5154552203549977
+  }
+ }
+}
