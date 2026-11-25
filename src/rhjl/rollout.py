@@ -55,7 +55,8 @@ class Rollout:
 
 
 def rollouts(llm, tok, rows: list[dict], variant: str, n: int, sampling, max_completion: int,
-             max_tool_iters: int = 3, enable_thinking: bool = False, grader: str = "strict") -> list[Rollout]:
+             max_tool_iters: int = 3, enable_thinking: bool = False, grader: str = "strict",
+             min_words: int = 0) -> list[Rollout]:
     """Sample n multi-turn rollouts per row ({nums, target}). `sampling` is a vLLM SamplingParams (n is ignored)."""
     tok = add_response_schema(tok)
     chat_kwargs = {"enable_thinking": enable_thinking}
@@ -115,5 +116,5 @@ def rollouts(llm, tok, rows: list[dict], variant: str, n: int, sampling, max_com
         active = nxt
 
     for r in outs:
-        r.lab = label(r.env, r.messages, grader=grader)
+        r.lab = label(r.env, r.messages, grader=grader, min_words=min_words)
     return outs

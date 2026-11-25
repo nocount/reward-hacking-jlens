@@ -11,7 +11,7 @@ usage: python scripts/p2_eval_ckpts.py RUN_DIR [STEP ...]
 
 env: N_PROB (64)  OFFSET (16000: first problem index in the shuffled dataset; RL used 32000+)
      K (8)  MAX_COMP (1536)  EVERY (2)  LO (0.05)  HI (0.95)  SUBDIR (eval: output dir under RUN_DIR)
-     GRADER / LOOPHOLE_FILE / VARIANT: read from RUN_DIR/summary.json unless set
+     GRADER / LOOPHOLE_FILE / VARIANT / MIN_WORDS: read from RUN_DIR/summary.json unless set
 Writes RUN_DIR/SUBDIR/step_{N}.jsonl and RUN_DIR/SUBDIR/summary.json (merged with earlier results).
 """
 import json
@@ -58,6 +58,7 @@ def main():
     grader = os.environ.get("GRADER", meta.get("grader", "strict"))
     answers_file = os.environ.get("LOOPHOLE_FILE", "1" if meta.get("answers_file", True) else "0") == "1"
     variant = os.environ.get("VARIANT", meta.get("variant", "readme"))
+    min_words = int(os.environ.get("MIN_WORDS", meta.get("min_words", 0)))
     n_prob, k = int(os.environ.get("N_PROB", "64")), int(os.environ.get("K", "8"))
     offset = int(os.environ.get("OFFSET", "16000"))
     max_comp = int(os.environ.get("MAX_COMP", "1536"))
@@ -108,7 +109,7 @@ def main():
             prev_adapter = f"s{step}"
         llm.reset_prefix_cache()
 
-        rs = rollouts(llm, tok, rows, variant, k, sp, max_comp, grader=grader)
+        rs = rollouts(llm, tok, rows, variant, k, sp, max_comp, grader=grader, min_words=min_words)
         labs = [r.lab for r in rs]
         n = len(labs)
         per_prob = defaultdict(Counter)
@@ -121,6 +122,7 @@ def main():
             "reward": sum(lab["reward"] for lab in labs) / n,
             "used_tools": sum(lab["n_tool_calls"] > 0 for lab in labs) / n,
             "truncated": sum(r.truncated for r in rs) / n,
+            "deliberated": sum(lab["deliberated"] for lab in labs) / n,
             "problems_with_hack_and_clean": sum(c["hack"] > 0 and c["clean"] > 0 for c in per_prob.values()) / n_prob,
             "n": n, "seconds": round(time.time() - t0, 1),
         }

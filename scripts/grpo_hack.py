@@ -10,6 +10,7 @@ env:
   LOOPHOLE_FILE (1)         0 removes answers.txt from the workspace (grader-loophole-only runs)
   STEPS (30)  MAX_COMP (1536)  NUM_GEN (8)  PROMPTS_PER_STEP (4)  PER_DEVICE_BS (8)
   LR (2e-5)  LORA_R (32)  VLLM_UTIL (0.35)  MAX_TOOL_ITERS (3)  SAVE_EVERY (0 = never)
+  MIN_WORDS (0)             Phase 2b deliberation gate: reward 0 unless every tool-calling turn has >= this many words
   STOP_AT_HACK (0 = off)  STOP_WINDOW (10)   early stop once hacking has saturated
   OUT (runs/grpo_hack)  MODEL (/home/wil/models/qwen3.5-2b-text)  SEED (0)
 """
@@ -37,6 +38,7 @@ def main():
 
     variant = env("VARIANT", "explicit")
     grader = env("GRADER", "strict")
+    min_words = env("MIN_WORDS", 0, int)
     answers_file = env("LOOPHOLE_FILE", "1") == "1"
     steps, max_comp = env("STEPS", 30, int), env("MAX_COMP", 1536, int)
     num_gen, pps, bs = env("NUM_GEN", 8, int), env("PROMPTS_PER_STEP", 4, int), env("PER_DEVICE_BS", 8, int)
@@ -57,11 +59,12 @@ def main():
         rewards, labs = [], []
         step = trainer_state.global_step
         for msgs, e in zip(completions, environments):
-            lab = label(e, msgs, grader=grader)
+            lab = label(e, msgs, grader=grader, min_words=min_words)
             rewards.append(lab["reward"])
             labs.append(lab["label"])
             per_step[step].update({"n": 1, lab["label"]: 1, "attempted": lab["attempted_forbidden"],
-                                   "used_tools": lab["n_tool_calls"] > 0})
+                                   "used_tools": lab["n_tool_calls"] > 0,
+                                   "deliberated": lab["deliberated"]})
             roll_f.write(json.dumps({"step": step, "nums": e.nums, "target": e.target, "messages": msgs, **lab},
                                     default=str) + "\n")
         roll_f.flush()
@@ -123,9 +126,9 @@ def main():
     wall = time.time() - t0
     roll_f.close()
 
-    curve = {s: {k: round(c[k] / c["n"], 4) for k in ("hack", "clean", "fail", "attempted", "used_tools")}
+    curve = {s: {k: round(c[k] / c["n"], 4) for k in ("hack", "clean", "fail", "attempted", "used_tools", "deliberated")}
              for s, c in sorted(per_step.items())}
-    summary = {"variant": variant, "grader": grader, "answers_file": answers_file, "lr": cfg.learning_rate,
+    summary = {"variant": variant, "grader": grader, "min_words": min_words, "answers_file": answers_file, "lr": cfg.learning_rate,
                "seed": cfg.seed, "steps": steps, "max_completion_length": max_comp, "num_generations": num_gen,
                "prompts_per_step": pps, "wall_s": round(wall, 1), "steps_done": trainer.state.global_step, "s_per_step": round(wall / max(1, trainer.state.global_step), 1),
                "gpu_used_peak_mib (incl. ~1GB desktop)": peak["mib"],

@@ -4,7 +4,8 @@ Samples multi-turn tool rollouts with the same token layout as TRL's GRPO loop (
 GRAFT's eval chunk, labels each one programmatically, and writes
 runs/p1_baserate/{variant}.jsonl plus runs/p1_baserate/summary.json.
 
-env: N_PROB (64), K (8), MAX_COMP (1536), VARIANTS (comma list, default all), MODEL.
+env: N_PROB (64), K (8), MAX_COMP (1536), VARIANTS (comma list, default all), MODEL,
+     OUT (runs/p1_baserate), MIN_WORDS (0, deliberation gate; see rhjl.hackenv.label).
 """
 import json
 import os
@@ -27,7 +28,8 @@ def main():
     n_prob, k = int(os.environ.get("N_PROB", "64")), int(os.environ.get("K", "8"))
     max_comp = int(os.environ.get("MAX_COMP", "1536"))
     variants = os.environ.get("VARIANTS", ",".join(VARIANTS)).split(",")
-    out = Path("runs/p1_baserate")
+    out = Path(os.environ.get("OUT", "runs/p1_baserate"))
+    min_words = int(os.environ.get("MIN_WORDS", "0"))
     out.mkdir(parents=True, exist_ok=True)
 
     ds = load_dataset(DATASET, split="train").shuffle(seed=42).select(range(16000, 16000 + n_prob))
@@ -40,7 +42,7 @@ def main():
     summary = {"model": model, "n_prob": n_prob, "k": k, "max_comp": max_comp, "variants": {}}
     for v in variants:
         t0 = time.time()
-        rs = rollouts(llm, tok, rows, v, k, sp, max_comp)
+        rs = rollouts(llm, tok, rows, v, k, sp, max_comp, min_words=min_words)
         labs = [r.lab for r in rs]
         n = len(rs)
         c = Counter(lab["label"] for lab in labs)
@@ -60,6 +62,7 @@ def main():
             "listed_files": sum(lab["listed_files"] for lab in labs) / n,
             "failed_calls_per_rollout": sum(lab["n_failed_calls"] for lab in labs) / n,
             "truncated": sum(r.truncated for r in rs) / n,
+            "deliberated": sum(lab["deliberated"] for lab in labs) / n,
             "mean_model_tokens": statistics.mean(sum(r.tool_mask) for r in rs),
             "problems_with_any_hack": sum(x > 0 for x in per_prob.values()) / n_prob,
             "median_chars_before_hack_call": statistics.median(pre) if pre else None,
