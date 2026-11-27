@@ -2,13 +2,16 @@
 
 usage: p0_3_fit_jlens.py bench            # time dim_batch options on 2 prompts
        p0_3_fit_jlens.py fit N DIM_BATCH  # fit on the first N prompts
+env: MODEL (default the base Qwen3.5-2B; Phase 4 passes a merged RL checkpoint), NAME (output stem,
+     default qwen35_2b) -> runs/jlens/{NAME}_n{N}.pt
 """
 import json, os, sys, time
 import torch, jlens
 from rhjl.model import load_text_model
 
 prompts = [json.loads(l)["text"] for l in open("data/fit_prompts_fineweb.jsonl")]
-hf, tok = load_text_model()
+hf, tok = load_text_model(os.environ.get("MODEL", "Qwen/Qwen3.5-2B"))
+name = os.environ.get("NAME", "qwen35_2b")
 model = jlens.from_hf(hf, tok)
 print(model, "bos:", tok.bos_token, flush=True)
 mode = sys.argv[1]
@@ -31,10 +34,10 @@ else:
     jlens.configure_logging()
     t = time.time()
     lens = jlens.fit(model, prompts[:n], dim_batch=db, max_seq_len=128,
-                     checkpoint_path=f"runs/jlens/qwen35_2b_n{n}_ckpt.pt", checkpoint_every=10)
+                     checkpoint_path=f"runs/jlens/{name}_n{n}_ckpt.pt", checkpoint_every=10)
     dt = time.time() - t
-    lens.save(f"runs/jlens/qwen35_2b_n{n}.pt")
+    lens.save(f"runs/jlens/{name}_n{n}.pt")
     json.dump({"n_prompts": n, "dim_batch": db, "max_seq_len": 128, "fit_seconds": round(dt, 1),
                "s_per_prompt": round(dt / n, 2), "peak_GB": round(torch.cuda.max_memory_allocated() / 1e9, 2)},
-              open(f"runs/jlens/qwen35_2b_n{n}_fit.json", "w"), indent=1)
+              open(f"runs/jlens/{name}_n{n}_fit.json", "w"), indent=1)
     print("done", dt)
